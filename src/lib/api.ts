@@ -16,9 +16,12 @@ export class ApiError extends Error {
 
 // On a phone the session cookie lives in SecureStore and must be sent by hand.
 // In a browser the cookie is sent automatically (credentials: "include").
-function sessionCookie(): string {
-  const client = authClient as unknown as { getCookie?: () => string };
-  return client.getCookie?.() ?? "";
+async function sessionCookie(): Promise<string> {
+  const client = authClient as unknown as {
+    getCookie?: () => Promise<string> | string;
+  };
+
+  return (await client.getCookie?.()) ?? "";
 }
 
 let handlingExpiry = false;
@@ -51,15 +54,21 @@ export async function api<T = any>(path: string, opts: Options = {}): Promise<T>
   } else if (Platform.OS === "web") {
     init.credentials = "include";
   } else {
-    const cookie = sessionCookie();
-    if (cookie) headers.Cookie = cookie;
-    init.credentials = "omit";
+    const cookie = await sessionCookie();
+
+if (cookie) {
+  headers.Cookie = cookie;
+}
+
+init.credentials = "omit";
   }
 
-  let res: Response;
+    let res: Response;
   try {
     res = await fetch(`${BASE}${path}`, init);
-  } catch {
+  } catch (err) {
+    console.log("[api] fetch failed:", `${BASE}${path}`, String(err));
+    console.log("[api] has cookie:", Boolean(headers.Cookie), "cookie length:", headers.Cookie?.length);
     throw new ApiError("Can't reach the server. Check your connection and that the backend is running.", 0, "NETWORK");
   }
 
