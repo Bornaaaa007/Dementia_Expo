@@ -1,5 +1,5 @@
 import { api, ApiError } from "@/lib/api";
-import { clearDevice, loadDevice } from "@/lib/patientDevice";
+import { clearDevice, getFaceSession, loadDevice, setFaceSession } from "@/lib/patientDevice";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -46,16 +46,23 @@ export default function PatientHome() {
   const [name, setName] = useState("");
 
   // Only a paired device may open this screen. Opening it also tells the family the patient is active.
-  useEffect(() => {
+    useEffect(() => {
     (async () => {
       const device = await loadDevice();
-      if (!device) return router.replace("/patient/login");
+      const session = getFaceSession();
+      if (!device || !session) return router.replace("/patient/login"); // no face check yet
       setName(device.name);
       try {
-        await api("/api/patient-device/checkin", { method: "POST", body: {}, deviceToken: device.token });
+        await api("/api/patient-device/checkin", {
+          method: "POST",
+          body: {},
+          deviceToken: device.token,
+          faceSession: session,
+        });
       } catch (e) {
         if (e instanceof ApiError && e.status === 401) {
-          await clearDevice();
+          if (e.code === "NO_DEVICE") await clearDevice(); // pairing was removed
+          setFaceSession(null); // face session expired: lock again
           router.replace("/patient/login");
         }
         // offline: stay on the screen, the check-in is simply skipped
@@ -101,7 +108,12 @@ export default function PatientHome() {
         </Text>
       </View>
 
-      <TouchableOpacity onPress={() => router.replace("/patient/login")}>
+           <TouchableOpacity
+        onPress={() => {
+          setFaceSession(null);
+          router.replace("/patient/login");
+        }}
+      >
         <Text style={styles.lock}>Lock screen</Text>
       </TouchableOpacity>
     </View>

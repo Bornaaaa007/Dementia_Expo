@@ -10,6 +10,13 @@ export interface PairedDevice {
   name: string;
 }
 
+// The face-check session lives only in memory, so closing the app locks it again.
+let faceSession: string | null = null;
+export const setFaceSession = (token: string | null) => {
+  faceSession = token;
+};
+export const getFaceSession = () => faceSession;
+
 export async function loadDevice(): Promise<PairedDevice | null> {
   try {
     const raw = Platform.OS === "web" ? window.localStorage.getItem(KEY) : await SecureStore.getItemAsync(KEY);
@@ -26,6 +33,7 @@ export async function saveDevice(device: PairedDevice) {
 }
 
 export async function clearDevice() {
+  faceSession = null;
   try {
     if (Platform.OS === "web") window.localStorage.removeItem(KEY);
     else await SecureStore.deleteItemAsync(KEY);

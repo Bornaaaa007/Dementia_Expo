@@ -1,8 +1,7 @@
 import { Platform } from "react-native";
 import { authClient } from "./auth-client";
 import { notify } from "./notify";
-
-const BASE = (process.env.EXPO_PUBLIC_API_URL ?? "").replace(/\/$/, "");
+import { API_BASE as BASE } from "./config";
 
 export class ApiError extends Error {
   status: number;
@@ -39,6 +38,7 @@ interface Options {
   method?: string;
   body?: unknown;
   deviceToken?: string; // patient device calls use a bearer token instead of the family session
+  faceSession?: string; // proof of the face check, needed for most patient calls
 }
 
 export async function api<T = any>(path: string, opts: Options = {}): Promise<T> {
@@ -49,11 +49,12 @@ export async function api<T = any>(path: string, opts: Options = {}): Promise<T>
   const init: RequestInit = { method: opts.method ?? (hasBody ? "POST" : "GET"), headers };
   if (hasBody) init.body = JSON.stringify(opts.body);
 
-  if (opts.deviceToken) {
+    if (opts.deviceToken) {
     headers.Authorization = `Bearer ${opts.deviceToken}`;
+    if (opts.faceSession) headers["X-Patient-Session"] = opts.faceSession;
   } else if (Platform.OS === "web") {
-    init.credentials = "include";
-  } else {
+  } 
+  else {
     const cookie = await sessionCookie();
 
 if (cookie) {
