@@ -107,6 +107,9 @@ export default function PatientHome() {
           {monthName} {dateNum}, {year}
         </Text>
       </View>
+            <TouchableOpacity style={styles.memoriesButton} onPress={() => router.push("/patient/memories")} accessibilityRole="button">
+        <Text style={styles.memoriesButtonText}>People who love you</Text>
+      </TouchableOpacity>
 
            <TouchableOpacity
         onPress={() => {
@@ -176,6 +179,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#583722",
     opacity: 0.85,
+  },
+    memoriesButton: {
+    marginTop: 32,
+    backgroundColor: "#51121A",
+    borderRadius: 20,
+    minHeight: 76,
+    paddingHorizontal: 28,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  memoriesButtonText: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#fff",
   },
   lock: {
     marginTop: 40,

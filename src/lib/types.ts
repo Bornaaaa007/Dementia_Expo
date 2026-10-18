@@ -79,3 +79,14 @@ export interface Settings {
   notifyInactivity: boolean;
   lastPatientId: string | null;
 }
+// Week 5: loved-one memory card
+export interface Memory {
+  id: string;
+  name: string;
+  relationship: string;
+  story: string;
+  photoUrl: string | null;
+  canEdit?: boolean; // only sent to family accounts
+  createdAt?: string;
+  updatedAt?: string;
+}

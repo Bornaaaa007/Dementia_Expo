@@ -49,19 +49,15 @@ export async function api<T = any>(path: string, opts: Options = {}): Promise<T>
   const init: RequestInit = { method: opts.method ?? (hasBody ? "POST" : "GET"), headers };
   if (hasBody) init.body = JSON.stringify(opts.body);
 
-    if (opts.deviceToken) {
+      if (opts.deviceToken) {
     headers.Authorization = `Bearer ${opts.deviceToken}`;
     if (opts.faceSession) headers["X-Patient-Session"] = opts.faceSession;
   } else if (Platform.OS === "web") {
-  } 
-  else {
+    init.credentials = "include"; // browser sends the login cookie automatically
+  } else {
     const cookie = await sessionCookie();
-
-if (cookie) {
-  headers.Cookie = cookie;
-}
-
-init.credentials = "omit";
+    if (cookie) headers.Cookie = cookie; // phone: the cookie lives in SecureStore
+    init.credentials = "omit";
   }
 
     let res: Response;

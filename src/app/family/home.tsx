@@ -211,6 +211,12 @@ export default function FamilyHome() {
                 <Button title="🙂 Log mood" small variant="secondary" onPress={() => setModal("mood")} />
                 <Button title="📝 Add note" small variant="secondary" onPress={() => setModal("note")} />
                 <Button title="👪 Invite family" small variant="secondary" onPress={showInvite} />
+                <Button
+                  title="🖼️ Loved ones"
+                  small
+                  variant="secondary"
+                  onPress={() => router.push({ pathname: "/family/memories", params: { patientId: selected.id } })}
+                />
               </View>
             </Card>
 
