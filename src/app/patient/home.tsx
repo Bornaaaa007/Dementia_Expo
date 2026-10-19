@@ -2,7 +2,7 @@ import { api, ApiError } from "@/lib/api";
 import { clearDevice, getFaceSession, loadDevice, setFaceSession } from "@/lib/patientDevice";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 function getTimeInfo(hour: number) {
   if (hour >= 5 && hour < 11) {
@@ -89,7 +89,7 @@ export default function PatientHome() {
   const ampm = hour >= 12 ? "PM" : "AM";
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
 
       <Text style={styles.greeting}>{name ? `${greeting}, ${name}` : greeting}</Text>
@@ -110,6 +110,13 @@ export default function PatientHome() {
             <TouchableOpacity style={styles.memoriesButton} onPress={() => router.push("/patient/memories")} accessibilityRole="button">
         <Text style={styles.memoriesButtonText}>People who love you</Text>
       </TouchableOpacity>
+            <TouchableOpacity style={[styles.memoriesButton, { marginTop: 16 }]} onPress={() => router.push("/patient/messages")} accessibilityRole="button">
+        <Text style={styles.memoriesButtonText}>Messages from family</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.memoriesButton, { marginTop: 16 }]} onPress={() => router.push("/patient/jar")} accessibilityRole="button">
+        <Text style={styles.memoriesButtonText}>Kind notes</Text>
+      </TouchableOpacity>
 
            <TouchableOpacity
         onPress={() => {
@@ -119,13 +126,13 @@ export default function PatientHome() {
       >
         <Text style={styles.lock}>Lock screen</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#BDD7DE",

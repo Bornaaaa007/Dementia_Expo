@@ -90,3 +90,28 @@ export interface Memory {
   createdAt?: string;
   updatedAt?: string;
 }
+// Week 6: messages and the Compliment & Encouragement Jar
+export interface FamilyMessage {
+  id: string;
+  kind: "message" | "jar";
+  text: string;
+  senderName: string;
+  sentAt: string;
+  read: boolean;
+  readAt: string | null;
+  canDelete: boolean;
+}
+
+export interface PatientMessage {
+  id: string;
+  text: string;
+  senderName: string;
+  sentAt: string;
+  read: boolean;
+}
+
+export interface JarNote {
+  id: string;
+  text: string;
+  senderName: string;
+}

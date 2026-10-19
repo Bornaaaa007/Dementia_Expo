@@ -187,7 +187,7 @@ export function MoodCard({ mood, onLog }: { mood: DashboardData["mood"]; onLog: 
 }
 
 // ---------------- Recent activity ----------------
-const typeIcon: Record<string, string> = { app_open: "📱", meal: "🍽️", walk: "🚶", call: "📞", note: "📝", sos: "🆘" };
+const typeIcon: Record<string, string> = { app_open: "📱", meal: "🍽️", walk: "🚶", call: "📞", note: "📝", sos: "🆘", message_read: "✉️", jar: "💌" };
 
 export function ActivityCard({ items }: { items: ActivityItem[] }) {
   return (

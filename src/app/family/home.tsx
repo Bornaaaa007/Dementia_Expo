@@ -217,6 +217,12 @@ export default function FamilyHome() {
                   variant="secondary"
                   onPress={() => router.push({ pathname: "/family/memories", params: { patientId: selected.id } })}
                 />
+                <Button
+                  title="✉️ Messages"
+                  small
+                  variant="secondary"
+                  onPress={() => router.push({ pathname: "/family/messages", params: { patientId: selected.id } })}
+                />
               </View>
             </Card>
 
