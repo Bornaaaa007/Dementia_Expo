@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, Pill, SectionTitle, Tone, colors } from "@/components/ui";
 import { MOOD_EMOJI, dayLetter, formatTime, timeAgo } from "@/lib/format";
-import { ActivityItem, AlertItem, DashboardData, PatientSummary, ReminderItem } from "@/lib/types";
+import { ActivityItem, AlertItem, DashboardData, PatientSummary, ReminderItem, SupplyItem } from "@/lib/types";
 import { StyleSheet, Text, View } from "react-native";
 
 const statusTone: Record<DashboardData["overview"]["status"], Tone> = {
@@ -186,8 +186,12 @@ export function MoodCard({ mood, onLog }: { mood: DashboardData["mood"]; onLog: 
   );
 }
 
-// ---------------- Recent activity ----------------
-const typeIcon: Record<string, string> = { app_open: "📱", meal: "🍽️", walk: "🚶", call: "📞", note: "📝", sos: "🆘", message_read: "✉️", jar: "💌" };
+// ---------------- Recent activity ------------//
+
+const typeIcon: Record<string, string> = {
+  app_open: "📱", meal: "🍽️", walk: "🚶", call: "📞", note: "📝", sos: "🆘", message_read: "✉️", jar: "💌",
+  pain: "🩹", pet_checkin: "🐶", medication_taken: "💊", medication_missed: "⚠️", routine_done: "✅",
+};
 
 export function ActivityCard({ items }: { items: ActivityItem[] }) {
   return (
@@ -209,6 +213,43 @@ export function ActivityCard({ items }: { items: ActivityItem[] }) {
             </View>
           </View>
         ))
+      )}
+    </Card>
+  );
+}
+
+// ---------------- Medicine supply ----------------
+const supplyTone: Record<SupplyItem["level"], Tone> = { ok: "good", low: "warn", out: "danger" };
+const supplyLabel: Record<SupplyItem["level"], string> = { ok: "OK", low: "Running low", out: "Out" };
+
+export function SupplyCard({ items, onManage }: { items: SupplyItem[]; onManage: () => void }) {
+  return (
+    <Card>
+      <SectionTitle>Medicine supply</SectionTitle>
+      {items.length === 0 ? (
+        <View>
+          <Text style={styles.empty}>
+            No medicines are being counted yet. Add a medicine with its pill count to get a warning before it runs out.
+          </Text>
+          <Button title="Add a medicine" small variant="secondary" onPress={onManage} />
+        </View>
+      ) : (
+        <>
+          {items.map((m) => (
+            <View key={m.id} style={styles.line}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.lineTitle}>{m.title}</Text>
+                <Text style={styles.muted}>
+                  {m.pillsRemaining} left · {m.daysLeft < 1 ? "less than a day" : `about ${m.daysLeft} day${m.daysLeft === 1 ? "" : "s"}`}
+                </Text>
+              </View>
+              <Pill label={supplyLabel[m.level]} tone={supplyTone[m.level]} />
+            </View>
+          ))}
+          <View style={{ marginTop: 10 }}>
+            <Button title="Manage medicines" small variant="secondary" onPress={onManage} />
+          </View>
+        </>
       )}
     </Card>
   );

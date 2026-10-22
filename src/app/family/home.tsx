@@ -1,4 +1,4 @@
-import { ActivityCard, AdherenceCard, AlertsCard, MoodCard, OverviewCard, RemindersCard } from "@/components/dashboard/Sections";
+import { ActivityCard, AdherenceCard, AlertsCard, MoodCard, OverviewCard, RemindersCard, SupplyCard } from "@/components/dashboard/Sections";
 import { PatientSwitcher } from "@/components/dashboard/PatientSwitcher";
 import { QuickActionModal, QuickMode, QuickPayload } from "@/components/dashboard/QuickActionModal";
 import { Banner, Button, Card, colors } from "@/components/ui";
@@ -60,7 +60,6 @@ export default function FamilyHome() {
     }
   }, [loadDashboard]);
 
-  // reload whenever the screen is shown (e.g. after coming back from Settings)
   useFocusEffect(
     useCallback(() => {
       refresh();
@@ -126,7 +125,7 @@ export default function FamilyHome() {
 
   if (loading) {
     return (
-      <View style={[styles.center]}>
+      <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.maroon} />
       </View>
     );
@@ -207,27 +206,46 @@ export default function FamilyHome() {
             <Card>
               <Text style={styles.cardTitle}>Quick actions</Text>
               <View style={styles.actions}>
-                <Button title="➕ Reminder" small variant="secondary" onPress={() => setModal("reminder")} />
-                <Button title="🙂 Log mood" small variant="secondary" onPress={() => setModal("mood")} />
-                <Button title="📝 Add note" small variant="secondary" onPress={() => setModal("note")} />
+                <Button title="➕ Reminder"    small variant="secondary" onPress={() => setModal("reminder")} />
+                <Button title="🙂 Log mood"    small variant="secondary" onPress={() => setModal("mood")} />
+                <Button title="📝 Add note"    small variant="secondary" onPress={() => setModal("note")} />
                 <Button title="👪 Invite family" small variant="secondary" onPress={showInvite} />
                 <Button
                   title="🖼️ Loved ones"
-                  small
-                  variant="secondary"
+                  small variant="secondary"
                   onPress={() => router.push({ pathname: "/family/memories", params: { patientId: selected.id } })}
                 />
                 <Button
                   title="✉️ Messages"
-                  small
-                  variant="secondary"
+                  small variant="secondary"
                   onPress={() => router.push({ pathname: "/family/messages", params: { patientId: selected.id } })}
+                />
+                {/* Week 7 */}
+                <Button
+                  title="🎵 Jukebox"
+                  small variant="secondary"
+                  onPress={() => router.push({ pathname: "/family/jukebox", params: { id: selected.id } })}
+                />
+                <Button
+                  title="📷 Gallery"
+                  small variant="secondary"
+                  onPress={() => router.push({ pathname: "/family/gallery", params: { id: selected.id } })}
+                />
+                                {/* Week 8 */}
+                <Button
+                  title="💊 Medicines"
+                  small variant="secondary"
+                  onPress={() => router.push({ pathname: "/family/schedules", params: { patientId: selected.id } })}
                 />
               </View>
             </Card>
 
             <RemindersCard reminders={dash.reminders.today} onMarkTaken={markTaken} onAdd={() => setModal("reminder")} />
-            <AdherenceCard adherence={dash.adherence} />
+                       <AdherenceCard adherence={dash.adherence} />
+            <SupplyCard
+              items={dash.supply ?? []}
+              onManage={() => router.push({ pathname: "/family/schedules", params: { patientId: selected.id } })}
+            />
             <MoodCard mood={dash.mood} onLog={() => setModal("mood")} />
             <ActivityCard items={dash.recentActivity} />
           </>
@@ -240,14 +258,14 @@ export default function FamilyHome() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.bg },
-  content: { padding: 16, paddingBottom: 40 },
-  header: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
-  title: { fontSize: 24, fontWeight: "800", color: colors.text },
-  sub: { fontSize: 14, color: colors.muted, marginTop: 2 },
-  gear: { fontSize: 14, color: colors.maroon, fontWeight: "600" },
+  screen:    { flex: 1, backgroundColor: colors.bg },
+  center:    { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.bg },
+  content:   { padding: 16, paddingBottom: 40 },
+  header:    { flexDirection: "row", alignItems: "center", marginBottom: 14 },
+  title:     { fontSize: 24, fontWeight: "800", color: colors.text },
+  sub:       { fontSize: 14, color: colors.muted, marginTop: 2 },
+  gear:      { fontSize: 14, color: colors.maroon, fontWeight: "600" },
   cardTitle: { fontSize: 17, fontWeight: "700", color: colors.text, marginBottom: 6 },
-  cardText: { fontSize: 14, color: colors.muted, lineHeight: 20 },
-  actions: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 8 },
+  cardText:  { fontSize: 14, color: colors.muted, lineHeight: 20 },
+  actions:   { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 8 },
 });
